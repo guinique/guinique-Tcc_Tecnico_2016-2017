@@ -1,0 +1,47 @@
+{
+    "window": {
+        "resizable": true,
+        "id": "tcc",
+        "frame": true,
+        "transparent": false,
+        "fullscreen": true,
+        "visible_on_all_workspaces": false,
+        "kiosk_emulation": false,
+        "kiosk": false,
+        "title": "tcc",
+        "show_in_taskbar": true,
+        "width": 640,
+        "show": true,
+        "always_on_top": false,
+        "as_desktop": false,
+        "visible": true,
+        "height": 480
+    },
+    "name": "simulador",
+    "additional_trust_anchors": [],
+    "main": "index.html",
+    "version": "0.1.0",
+    "node-remote": [],
+    "webexe_settings": {
+        "windows-x64": true,
+        "uncompressed_folder": false,
+        "mac-x64": false,
+        "download_dir": "C:/Users/User/AppData/Local/Web2Executable/Web2Executable/files/downloads",
+        "custom_script": "",
+        "output_pattern": "",
+        "windows-x32": true,
+        "linux-x32": false,
+        "force_download": false,
+        "nw_compression_level": 0,
+        "linux-x64": false,
+        "sdk_build": false,
+        "export_dir": "C:\\Users\\User\\Desktop",
+        "nw_version": "0.24.0-beta1"
+    },
+    "nodejs": true,
+    "app_name": "simulador",
+    "webkit": {
+        "plugin": true,
+        "double_tap_to_zoom_enabled": false
+    }
+}

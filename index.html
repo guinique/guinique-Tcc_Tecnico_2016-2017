@@ -1,0 +1,430 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/p5@0.10.2/lib/p5.js"></script>
+    <!-- uncomment lines below to include extra p5 libraries -->
+    <!--<script language="javascript" src="libraries/p5.dom.js"></script>-->
+    <!--<script language="javascript" src="libraries/p5.sound.js"></script>-->
+    <script language="javascript" type="text/javascript" src="libraries/p5.dom.js"></script>
+    <script language="javascript" type="text/javascript" src="libraries/p5.play.js"></script>
+    <script language="javascript" type="text/javascript" src="libraries/joaninha.js"></script>
+    <script language="javascript" type="text/javascript" src="sketch.js"></script>
+    <script language="javascript" type="text/javascript" src="libraries/jquery-3.2.1.min.js"></script>
+    <script language="javascript" type="text/javascript" src="libraries/jquery.canvasjs.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
+    <script language="javascript" type="text/javascript" src="libraries/chartScript.js"></script>
+    <script language="javascript" type="text/javascript" src="grafico.js"></script>
+    <script language="javascript" type="text/javascript" src="libraries/semantic.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="libraries/semantic.min.css">
+    <link rel="stylesheet" type="text/css" href="libraries/style.css">
+
+    <style>
+        span {
+            margin-bottom: 50vh !important;
+        }
+    </style>
+
+</head>
+
+<body>
+    <i class="sidebar icon" id="openNav"></i>
+    <div class="ui grid">
+        <div class="eleven wide column" style="height: 100% !important">
+            <div oncontextmenu="return false" ; id="canvas"></div>
+        </div>
+        <div class="five wide column">
+            <!--    tabmenu-->
+            <div class="ui top attached tabular menu">
+                <a id="grafico" class="item active menuTab">
+                    Gráfico
+                </a>
+                <a id="tabela" class="item menuTab">
+                    Tabela
+                </a>
+            </div>
+            <div id="divGrafico">
+                <div class="ui bottom attached segment">
+                    <div id="chartContainer" style="height: 88%; width:100%;"></div>
+                    <script type="text/javascript">
+                        carregarChart();
+                    </script>
+                </div>
+            </div>
+            <div id="divTabela" style="height: 100%;overflow-y: auto !important">
+                <table id="tabelaGeracao" class="ui definition table">
+                    <thead>
+                        <tr>
+                            <th>Geração</th>
+                            <th>Quantidade de joaninhas</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <!-- modal -->
+    <div class="ui modal" id="myModal1v">
+        <div class="header">
+            SESN
+            <button class="ui icon button botaoModalHelpStart" style="float:right">
+                <i class="help icon"></i>
+            </button>
+        </div>
+        <div id="bodyModal">
+            <p id="textoModal">Informe o número de joaninhas desejado</p>
+            <div class="ui action input">
+                <input type="text" id="numeroJoaninhas">
+                <button id="botaoModal1v" class="ui icon button">
+                    <i class="large bug icon"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="ui modal" id="modalHelpStart">
+        <div class="header">
+            Como funciona
+            <button id="closeHelpStart" class="ui icon button" style="float:right">
+                <i class="delete icon"></i>
+            </button>
+        </div>
+        <p style="margin-top:2vh;margin-left: 2vh" id="textoModal">Para começar a utilizar o simulador é necessário que
+            seja informado o número de joaninhas desejado.<br>Após
+            isso, é possível observar joaninhas na tela que demonstrarão o processo de seleção natural.<br>Na lateral
+            esquerda se encontra o menu lateral que apresenta algumas funções de modificação das joaninhas.<br>No
+            menu lateral direito estão situados gráfico e tabela que apresentam em geral a quantidade de joaninhas
+            de cada geração, para que se possa observar a seleção.
+        </p>
+    </div>
+
+    <!-- modal 1 gen -->
+    <div class="ui modal" id="modal1gen">
+        <div class="header">
+            O que aconteceu?
+            <button id="close1gen" class="ui icon button" style="float:right">
+                <i class="delete icon"></i>
+            </button>
+        </div>
+        <p style="margin-top:2vh;margin-left: 2vh;" id="textoModal">Ao passar determinado tempo, as joaninhas se
+            reproduzirão simulando o processo de seleção natural, as joaninhas serão
+            selecionadas de acordo com sua adptação com o ambiente. Neste caso é a cor do local em que ela se encontra.
+            Caso
+            o habitat mude, em determinado momento as joaninhas se tornarão novamente adaptadas
+            ao ambiente, por conta do processo de mutação. Clique no ícone localizado no canto superior esquerdo para
+            mais informações e funcionalidades.
+        </p>
+    </div>
+    <div class="ui sidebar inverted vertical menu">
+        <i id="closeNav" class="big inverted remove icon"></i><br>
+        <div id="container">
+            <div class="ui inverted accordion">
+                <div class="title">
+                    <i class="dropdown icon"></i> Características gerais
+                </div>
+                <div class="content">
+                    <div id="container">
+                        <span style="color: white;">Geração</span>
+                        <span style="color: white; margin-bottom:1vh;" class="geracao"></span><br><br>
+                        <span style="color: white; margin-top:1vh;">Número de joaninhas</span>
+                        <span style="color: white; margin-top:1vh;" class="numjoa"></span><br><br>
+                        <span style="color: white; margin-top:1vh;">Tempo Geração</span><br>
+                        <input style="margin-top:1vh;" type="range" id="tempoGen" min="1" max="50" value="5"><br>
+                        <span style="color: white;" id="t1">5</span><br>
+                    </div>
+                </div>
+                <div class="ui hidden divider"></div>
+                <div class="title">
+                    <i class="dropdown icon"></i> Selecionar cor da joaninha
+                </div>
+                <div class="content">
+                    <div class="field">
+                        <!-- esse input recebe a cor, lá no js tu coloca pra variavel que tu quiser receber a cor -->
+                        <input type="hidden" name="cor" class="input cor" value="">
+                        <div class="ui input eleven ui stackable buttons">
+                            <div class="ui button red cor botoesJoana" data-value="255,0,0">Vermelho<a
+                                    class="ui right corner label"><i class="checkmark icon"></i></a></div>
+                            <div class="ui button yellow cor botoesJoana" data-value="255,255,0">Amarelo</div>
+                            <div class="ui button green cor botoesJoana" data-value="0,255,0">Verde</div>
+                            <div class="ui button teal cor botoesJoana" data-value="0,255,255">Ciano</div>
+                            <div class="ui button blue cor botoesJoana" data-value="0,0,255">Azul</div>
+                            <div class="ui button purple cor botoesJoana" data-value="255,0,255">Roxo</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ui hidden divider"></div>
+                <div class="title">
+                    <i class="dropdown icon"></i> Selecionar cor do quadrante
+                </div>
+
+                <div class="content">
+                    <input type="hidden" name="cor" class="input cor" value="">
+                    <div class="ui input eleven ui stackable buttons">
+                        <div class="ui button red cor botoesQuad" data-value="[255,0,0]" data-cor="2">Vermelho</div>
+                        <div class="ui button yellow cor botoesQuad" data-value="[255,255,0]" data-cor="3">Amarelo</div>
+                        <div class="ui button green cor botoesQuad" data-value="[0,255,0]" data-cor="0">Verde<a
+                                class="ui right corner label"><i class="checkmark icon"></i></a></div>
+                        <div class="ui button blue cor botoesQuad" data-value="[0,0,255]" data-cor="1">Azul</div>
+                    </div>
+                </div>
+            </div>
+            <div class="ui hidden divider"></div>
+            <div class="ui fluid action input">
+                <input id="quantJoa" type="number" min="0">
+                <button id="adicionarJoaninhas" class="ui button">Adicionar</button>
+            </div>
+            <div class="ui hidden divider"></div>
+            <button id="deletarTodas" class="ui labeled fluid icon button">
+                <i class="delete icon"></i>
+                Apagar joaninhas
+            </button>
+            <br><br>
+            <!-- <button class="ui icon button" style="float:right">
+                <i class="help icon"></i>
+            </button> -->
+            <button class="ui labeled fluid icon button botaoModalHelp">
+                <i class="help icon"></i>
+                Como funciona
+            </button>
+        </div>
+</body>
+
+<!-- fim modal primeira vez -->
+<!--    <div id="mySidenav" class="sidenav">
+        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+        <div id="container">
+        <div class="ui inverted accordion">
+          <div class="title">
+            <i class="dropdown icon"></i>
+            Características gerais
+          </div>
+          <div class="content">
+            <div id="container">
+                <span>Número de joaninhas</span>
+                <span class="numjoa"></span>
+                <span class="fps"></span>
+ 
+                <span>idade Reprodutiva</span>
+                <input id="idadeRepro" type="range" name="idadeRepro" min="1" max="30" value = "3">
+                    <span id="t">3</span>
+ 
+                <span>idade Morte</span>
+                <input type="range" id="deathAge" min="1" max="50" value = "30">
+                <span id="t1">30</span>
+ 
+                <span>Chance de morte</span>
+                <input type="range" id="deathChance" min="0" max="50" value = "0" >
+                <span id="t3">0</span>
+ 
+          </div>
+          </div>
+          <div class="title">
+            <i class="dropdown icon"></i>
+            Selecionar cor da joaninha
+          </div>
+          <div class="content">
+            <div class="field">
+                         esse input recebe a cor, lá no js tu coloca pra variavel que tu quiser receber a cor
+                        <input type="hidden" name="cor" class="input cor" value="">
+                        <div class="ui input eleven ui stackable buttons">
+                            <div class="ui button red cor botoesJoana" data-value="255,0,0">Vermelho<a class="ui right corner label"><i class="checkmark icon"></i></a></div>
+                            <div class="ui button yellow cor botoesJoana" data-value="255,255,0">Amarelo</div>
+                            <div class="ui button green cor botoesJoana" data-value="0,255,0">Verde</div>
+                            <div class="ui button teal cor botoesJoana" data-value="0,255,255">Ciano</div>
+                            <div class="ui button blue cor botoesJoana"  data-value="0,0,255">Azul</div>
+                            <div class="ui button purple cor botoesJoana"  data-value="255,0,255">Roxo</div>
+                            <div class="ui white button cor botoesJoana"  data-value="255,255,255">Branco</div>
+                            <div class="ui button black cor botoesJoana"  data-value="0,0,0">Preto</div>
+                        </div>
+                    </div>
+          </div>
+        <div class="title">
+            <i class="dropdown icon"></i>
+            Selecionar cor do quadrante
+        </div>
+ 
+            <div class="content">
+ 
+                <input type="hidden" name="cor" class="input cor" value="">
+                 <div class="ui input eleven ui stackable buttons">
+                  <div class="ui button red cor botoesQuad" data-value="[255,0,0]" >Vermelho</div>
+                  <div class="ui button yellow cor botoesQuad" data-value="[255,255,0]">Amarelo</div>
+                  <div class="ui button green cor botoesQuad" data-value="[0,255,0]">Verde<a class="ui right corner label"><i class="checkmark icon"></i></a></div>
+                  <div class="ui button blue cor botoesQuad" data-value="[0,0,255]">Azul</div>
+                </div>
+            </div>
+ 
+</div>
+</div>
+</div> -->
+
+<script>
+    var modalStart = false;
+
+    $("#divTabela").hide();
+    $(".menuTab").click(function () {
+        $(".menuTab").each(function () {
+            $(this).removeClass('active');
+        })
+        $(this).addClass('active');
+    });
+    $("#grafico").click(function () {
+        // $(".ui.attached.segment").html('<div id="chartContainer" style="height: 80%; width:100 %;"></div>');
+        // carregarChart();
+        $("#divGrafico").show();
+        $("#divTabela").hide();
+    });
+    $("#tabela").click(function () {
+        // $(".ui.attached.segment").html('<table id="tabelaGeracao" class="ui definition table"><thead><tr><th>Geração</th><th>Quantidade de joaninhas</th></tr></thead><tbody></tbody></table>');
+        $("#divTabela").show();
+        $("#divGrafico").hide();
+    });
+
+    $("#adicionarJoaninhas").click(function () {
+        addLady(quantJoa.value);
+        numjoa = joaninhas.length;
+        document.querySelector(".numjoa").innerHTML = joaninhas.length;
+    });
+
+    $("#deletarTodas").click(function () {
+        deleteAll();
+        numjoa = 0;
+        document.querySelector(".numjoa").innerHTML = joaninhas.length;
+    });
+
+    $("#openNav").click(function (e) {
+        nav = true;
+        $('.ui.sidebar').sidebar('setting', 'transition', 'overlay').sidebar('setting', 'closable', false)
+            .sidebar(
+                'setting', 'dimPage', false).sidebar('toggle');
+    });
+
+    $("#closeNav").click(function (e) {
+        nav = false;
+        $('.ui.sidebar').sidebar('toggle');
+    });
+
+    $(".botaoModalHelp, #closeHelp").click(function () {
+        $("#modalHelpStart").modal('toggle');
+    });
+
+    $(".botaoModalHelpStart, #closeHelpStart").click(function () {
+        $("#modalHelpStart").modal({
+            allowMultiple: true
+        }).modal('toggle');
+    });
+
+    function openNav(e) {
+        nav = true;
+        document.getElementById("mySidenav").style.width = "20%";
+        document.getElementById("iconeNav").style.display = "none";
+    }
+
+    function closeNav() {
+        nav = false;
+        document.getElementById("mySidenav").style.width = "0";
+        setTimeout(function () {
+            document.getElementById("iconeNav").style.display = "inline"
+        }, 350);
+    }
+
+    document.getElementById('tempoGen').addEventListener('input', function () {
+        document.getElementById('t1').innerHTML = document.getElementById('tempoGen').value
+    });
+    var contador = 1;
+
+    function addRow() {
+        $('#tabelaGeracao').prepend('<tr><td>' + contador +
+            'ª</td><td><div class="ui grid"><div class = "three column row" style="margin-bottom:-3vh !important;"><div class ="column"><img src="imagens/joanaoVerm.png" style="width:30px;height:30px;"><span class="numJoaninhasTabela" >' +
+            ladyCount[0] +
+            '</span></div><div class ="column"><img src="imagens/joanaoVerd.png" style="width:30px;height:30px;"><span class="numJoaninhasTabela"">' +
+            ladyCount[1] +
+            '</span></div><div class ="column"><img src="imagens/joanaoAzul.png" style="width:30px;height:30px;"><span class="numJoaninhasTabela">' +
+            ladyCount[2] +
+            '</span></div></div><br><div class = "three column row"><div class ="column"><img src="imagens/joanaoAmar.png" style="width:30px;height:30px;"><span class="numJoaninhasTabela">' +
+            ladyCount[3] +
+            '</span></div><div class ="column"><img src="imagens/joanaoCiano.png" style="width:30px;height:30px;"><span class="numJoaninhasTabela">' +
+            ladyCount[4] +
+            '</span></div><div class ="column"><img src="imagens/joanaoRoxo.png" style="width:30px;height:30px;"><span class="numJoaninhasTabela">' +
+            ladyCount[5] + '</div></div></div></span></td></tr>');
+        contador++;
+    }
+
+    // escolha de cor
+    $('.botoesJoana').on('click', function () {
+        $('.botoesJoana').children().remove();
+        $(this).append('<a class="ui right corner label"><i class="checkmark icon"></i></a>');
+        // aqui ele ta pegando o data-value da div que tu clicou e botando lá naquele input
+        lastColor = $(this).data('value');
+    });
+
+    $('.botoesQuad').on('click', function () {
+        $('.botoesQuad').children().remove();
+        $(this).append('<a class="ui right corner label" id="marker"><i class="checkmark icon"></i></a>');
+        // aqui ele ta pegando o data-value da div que tu clicou e botando lá naquele input
+        lastQuadColor = corQuad;
+        corQuad = $(this).data('value');
+        corImg = parseInt($(this).data('cor'));
+        quad.shapeColor = corQuad;
+    });
+
+    //modal1v
+    var modalOpen = false;
+    $('.numjoa').on('DOMSubtreeModified', function () {
+        if ($(".numjoa").text() == "0") {
+            modalOpen = true;
+            $('#myModal1v').modal({
+                closable: false,
+                onHidden: function (e) {
+                    countLady();
+                    addRow();
+                },
+                allowMultiple: true
+            }).modal('show');
+        }
+    });
+
+    $("#myModal1v").keypress(function (e) {
+        if (e.which == 13) {
+            $("#botaoModal1v").trigger('click');
+        }
+    });
+
+    $("#botaoModal1v").on('click', function () {
+        modalOpen = false;
+        numjoa = parseInt($("#numeroJoaninhas").val(), 10);
+        $("#numeroJoaninhas").val("");
+        $('#myModal1v').modal('hide');
+    });
+
+    $('.ui.accordion').accordion();
+
+    $('.geracao').on("DOMSubtreeModified", function () {
+        if (contGeracao == 2) {
+            $('#modal1gen').modal('show');
+        }
+    });
+
+    $('#close1gen').click(function () {
+        $('#modal1gen').modal('hide');
+    });
+
+    $(".modal").each(function () {
+        var totalHeight = 0;
+        $(this).children().each(function () {
+            totalHeight = totalHeight + $(this).outerHeight(true);
+        });
+        $(this).css('height', $(this).outerHeight(true) + totalHeight + 20);
+
+    });
+
+
+    //     var lek = $(".modal:last-child").height();
+    // console.log(lek);
+    //$(".modal").css("height", "100%").css("height", "+="+lek);
+</script>
+</body>
+
+</html>
